@@ -4,8 +4,19 @@
 
 typedef struct node{
 	char *token;
+	char* type;
+	char* label;
+	char* trueLabel;
+	char* falseLabel;
+	char* nextLabel;
+	char* var;
+	int line;
+	int paramFlag;
+	int oneStmt;
+	char* code;
 	struct node *left;
 	struct node *right;
+	struct node *parent;
 }node;
 
 node *mknode(char *token ,node *left, node *right);
@@ -14,7 +25,6 @@ void printtree(node *tree, int tab);
 node *mk1node(char *token );
 void printInOrderTree(node *tree, int tab);
 void printPreOrderTree(node* tree,int tabs);
-
 
 int isFUNC(char* a);
 void printTabs(int tabs);
@@ -31,22 +41,15 @@ void printAss(node* n, int tabs);
 void printVarDec(node* n, int tabs);
 void printStringDec(node* n,int tabs);
 void printExpr(node*,int);
+void addType(node* n,char* t);
 
 
-node *mknode(char *token ,node *left ,node *right){
-	node *newnode = (node*)malloc(sizeof(node));
-	char *newstr = (char*)malloc(sizeof(char)+1);
-	strcpy(newstr ,token);
-	newnode->left = left;
-	newnode->right = right;
-	newnode->token = newstr;
-	return newnode;
+void addType(node* n,char* t ){
+	strcpy(n->type,t);
 }
 
 void printtree(node *tree,int tabs){
-	/*
-	Printing the code tree
-	*/
+
 		if(strcmp(tree->token, "STMT") == 0 
 		|| strcmp(tree->token, "IGNORE") == 0 
 		|| strcmp(tree->token, "REC_FUNC") == 0 
@@ -103,7 +106,16 @@ void printtree(node *tree,int tabs){
 
 			else{
 				printf("\n");
+			// printf("(%s\n" ,tree->token);
+
+			// 	if(tree->left)
+			// 		printtree(tree->left, tabs+1);
+			// 	if(tree->right)
+			// 		printtree(tree->right, tabs+1);
+			// 	printTabs(tabs);
+			// 	printf(")\n");
 			printExpr(tree,tabs);
+				
 			}
 		}
 	
@@ -161,10 +173,10 @@ void printInOrderTree(node* tree,int tabs)
 {
 	if(tree->left)
 		printInOrderTree(tree->left, tabs);
-
 	printf("%s" ,tree->token);
 	if(tree->right)
-		printInOrderTree(tree->right, tabs);		
+		printInOrderTree(tree->right, tabs);
+		
 }
 
 void printPreOrderTree(node* tree,int tabs)
@@ -176,21 +188,10 @@ void printPreOrderTree(node* tree,int tabs)
 		printPreOrderTree(tree->right, tabs);
 }
 
-node *mk1node(char *token )
-{
-	// Creates a tree with only 1 element - node
-	node *newnode = (node*)malloc(sizeof(node));
-	char *newstr = (char*)malloc(sizeof(char)+1);
-	strcpy(newstr ,token);
-	newnode->left = NULL;
-	newnode->right = NULL;
-	newnode->token = newstr;
-	return newnode;
-}
+
 
 char* strc(char* a, char* b)
 {
-	// Connecting 2 strings
 	char *newstr = (char*)malloc(sizeof(char)+1);
 	newstr = strcpy(newstr,a);
 	newstr = strcat(newstr,b);
@@ -199,7 +200,6 @@ char* strc(char* a, char* b)
 
 int isFUNC(char* a)
 {
-	// Checking if the string is "FUNC"
 	char b[5] = "FUNC";
 	for(int i=0;i<4;i++)
 		if(a[i] != b[i])
@@ -209,14 +209,12 @@ int isFUNC(char* a)
 
 void printTabs(int tabs)
 {
-	// Printings tabs
 	for(int i=0 ; i<tabs; i++)
 		printf("\t");
 }
 
 void printArgs(node* n1,int tabs)
 {
-	// Printing argoments
 	node* n = n1;
 	printf("(%s " ,n->token);
 	n=n->left;
@@ -250,17 +248,16 @@ void printArgs(node* n1,int tabs)
 
 void printFunc(node* n, int tabs)
 {
-	// Printing function
 	node* t = n;
 	printf("(%s\n" ,t->token);
 	printTabs(tabs);
 	printf("FUNC NAME: %s\n",t->left->token);
 	printTabs(tabs);
-	printArgs(t->left->left,tabs+1); //Sending the args node
+	printArgs(t->left->left,tabs+1); 				//sending the args node
 	printTabs(tabs);
     printf("(BODY \n");
     if(t->left->right->left)
-	    printtree(t->left->right->left,tabs+1);	// left->right gives us the body node
+	    printtree(t->left->right->left,tabs+1);					//left->right gives us the body node
 	printTabs(tabs);
     printf(")\n");
     if(t->right != NULL)
@@ -270,13 +267,14 @@ void printFunc(node* n, int tabs)
 }
 
 void printReturn(node* n, int tabs)
-{	
+{
 	node*t = n;
 	if(t->right != NULL)
 	{
 		printTabs(tabs);
 		printf("(RETURN %s[\n", t->left->token);
-		printExpr(t->right->left,tabs+2); // Print the index expr
+	//	printInOrderTree(t->right->left,tabs);
+		printExpr(t->right->left,tabs+2);		//print the index expr
 		printTabs(tabs+1);
 		printf("]\n");
 		printTabs(tabs);
@@ -291,10 +289,13 @@ void printReturn(node* n, int tabs)
 	{
 		printTabs(tabs);
 		printf("(RETURN\n ");
+		//printInOrderTree(t->left,tabs);
 		printExpr(t->left,tabs+1);
+		//printf("\n");
 		printTabs(tabs);
 		printf(")\n");
-	}		
+	}
+		
 }
 
 void printIf(node* n, int tabs)
@@ -303,6 +304,7 @@ void printIf(node* n, int tabs)
 	printf("(%s\n" ,t->token);
 	printTabs(tabs);
 	printf("(COND:\n ");
+	//printInOrderTree(t->left,tabs);
 	printExpr(t->left,tabs+1);
 	printTabs(tabs);
 	printf(")\n");
@@ -320,7 +322,7 @@ void printIfElse(node* n, int tabs)
 	printIf(t->left,tabs+1);
 	printTabs(tabs);
 	printf("(%s\n" ,t->right->token);
-	printtree(t->right->left,tabs+1); 
+	printtree(t->right->left,tabs+1); 		//check later  if else not null
 	printTabs(tabs);
 	printf(")\n");
 	printTabs(tabs-1);
@@ -337,18 +339,18 @@ void printFuncCall(node* n, int tabs)
 		printf("(PARAMS: NONE)\n");
 	else
 		{
-			t=t->left; // Moving from pramas val to funcexp
+			t=t->left;			// moving from pramas val to funcexp
 			printf("(PARAMS:\n ");
 			
 			while(t!=NULL){
-					if(strcmp(t->token,",")==0)	// Checking if the node is ',' to know how to act
+					if(strcmp(t->token,",")==0)		//checking if the node is ',' to know how to act
 					{
 						printExpr(t->left,tabs+1);	
 						t=t->right;
 					}
 					else{
 						printExpr(t,tabs+1);
-						t=t->right;
+						t=NULL;
 					}
 			}
 			printTabs(tabs);
@@ -365,6 +367,7 @@ void printWhile(node* n, int tabs)
 	printTabs(tabs);
 	printf("(COND: \n");
 	printExpr(t->left,tabs+1);
+	//printtree(t->left,tabs+1);
 	printTabs(tabs);
 	printf(")\n");
 	printtree(t->right,tabs);
@@ -380,6 +383,7 @@ void printDoWhile(node* n, int tabs)
 	printTabs(tabs);
 	printf("(COND: \n");
 	printExpr(t->right,tabs+1);
+	//printtree(t->right,tabs+1);
 	printTabs(tabs);
 	printf(")\n");
 	printTabs(tabs-1);
@@ -399,6 +403,7 @@ void printFor(node* n, int tabs)
 	printTabs(tabs);
     printf("(COND: \n");
 	printExpr(cond->left,tabs+1);
+	//printtree(cond->left,tabs+1);
 	printTabs(tabs);
 	printf(")\n");
 	printTabs(tabs);
@@ -406,6 +411,7 @@ void printFor(node* n, int tabs)
 	printTabs(tabs+1);
     printf("%s = \n",update->left->token); 
 	printExpr(update->right,tabs+1);                
+//	printtree(update->right,tabs+1);                
 	printTabs(tabs);
 	printf(")\n");
     printtree(t->right,tabs);
@@ -444,23 +450,24 @@ void printAss(node* n, int tabs)
 void printVarDec(node* n, int tabs)
 {
 	node *nv,*t = n;
-	printf("(VARDEC: %s\n",t->left->token);	// Print the type
+	printf("(VARDEC: %s\n",t->left->token);				//print the type
 	printTabs(tabs+1);
-	printf("(%s ",t->left->left->token); // Print the first id
-	nv = t->left->right; // Next var ptr
-	while(nv != NULL)	{	// If nextvar is not null
+	printf("(%s ",t->left->left->token);		//print the first id
+	nv = t->left->right;						//next var ptr
+	while(nv != NULL)	{				//if nextvar is not null
 		if(strcmp(nv->token,"=")==0){
 			printf("=\n");
 			printExpr(nv->left,tabs+2);
 			nv=nv->right;
 		}
-		else // Token=id
+		else //token=id
 		{	
 			printf("\n");
 			printTabs(tabs+1);
 			printf("%s", nv->token);
 			nv=nv->left;
 		}
+
 	}
 	printf("\n");
 	printTabs(tabs+1);
@@ -471,23 +478,30 @@ void printVarDec(node* n, int tabs)
 
 void printStringDec(node* n,int tabs){
 	node *ns,*t = n;
-	printf("(STRING_DEC:\n"); // Print the id
+	printf("(STRING_DEC:\n");				//print the id
 	printTabs(tabs+1);
-	printf("(%s[%s]",t->left->token,t->left->left->token); //Print the size
-	ns = t->right; // Next var ptr
-	while(ns != NULL) // If next str is not null
+	printf("(%s[%s]",t->left->token,t->left->left->token);		//print the size
+	ns = t->right;						//next var ptr
+	while(ns != NULL)	//if next str is not null
 	{
 		if(strcmp(ns->token,"=")==0){
 			printf("=%s",ns->left->token);
 
 		}
-		else // Token=id
+		else //token=id
 		{
 			printf(", %s[%s]", ns->token,ns->left->token);
 		}
 		ns=ns->right;
+
 	}
 	printf(")\n");	
 	printTabs(tabs);
 	printf(")\n");	
 }
+
+
+
+
+
+

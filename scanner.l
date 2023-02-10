@@ -50,7 +50,7 @@ false	{yylval.str = "false"; return FALSE;}
 [0][xX][0-9]+[A-F]	{yylval.str = strdup(yytext); return INTVAL;}
 
 
-['][a-zA-Z][']	{yylval.str = strdup(yytext); return CHARVAL;}
+['][!-~][']	{yylval.str = strdup(yytext); return CHARVAL;}
 
 ["][ !#-~]*["]	{yylval.str = strdup(yytext); return STRINGVAL;}
 
