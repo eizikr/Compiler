@@ -1,6 +1,6 @@
 # Compiler Project
 
-This is a compiler project developed by Itzik Rahamim as part of the "Compilers" course at SCE Beer Sheva.
+This is a compiler project developed by Itzik Rahamim, Gil ben hamo and Yovel aloni as part of the "Compilers" course at SCE College.
 
 ## Description
 
@@ -14,18 +14,57 @@ This project is a compiler implementation for a simple procedural language. The 
 
 ## Language Description
 
-The language supported by this compiler has the following features:
+This section provides a detailed description of the syntax and semantics of the simple procedural language supported by this compiler.
 
-- Keywords: bool, char, int, real, string, int\*, char\*, real\*, if, else, while, for, var, return, null, void, do
-- Operators: &&, /, =, ==, >, >=, <, <=, -, !, !=, ||, +, \*, &
-- Literal Lexemes: boolean, char, integers, reals, strings, identifiers, pointers
-- Other Lexemes: ;, ,, {, }, (, ), [, ], ...
+### Syntax
 
-For more detailed information about the language's syntax and semantics, please refer to the provided language description in the project documentation.
+The syntax of the language is defined using context-free grammar rules. Here is an overview of the main syntax elements:
+
+1. Variables:
+   - Variable declarations start with the keyword `var` followed by the variable name and optional initialization.
+   - Supported variable types are `int`, `char`, `bool`, and `real`.
+   - Multiple variables can be declared on the same line, separated by commas.
+
+2. Control Flow:
+   - Conditional statements are supported using the `if` and `else` keywords.
+   - Looping is supported using the `while` and `for` keywords.
+
+3. Expressions:
+   - Arithmetic operators (`+`, `-`, `*`, `/`) can be used for mathematical operations.
+   - Relational operators (`<`, `>`, `<=`, `>=`, `==`, `!=`) compare values and return boolean results.
+   - Logical operators (`&&`, `||`, `!`) perform logical operations on boolean values.
+
+4. Functions:
+   - Function definitions start with the keyword `void`, followed by the function name, parameters (if any), and a block of code.
+   - Functions can be called by using the function name followed by parentheses and arguments (if any).
+
+### Semantics
+
+The semantics of the language define the meaning and behavior of the various language constructs. Here are the key semantic rules:
+
+1. Variables:
+   - Variables must be declared before they can be used.
+   - Variables have a specific type that determines the kind of data they can store.
+
+2. Control Flow:
+   - Conditional statements execute blocks of code based on the evaluation of a condition.
+   - Looping statements repeatedly execute a block of code while a condition is true.
+
+3. Expressions:
+   - Expressions can involve variables, literals, and operators.
+   - Arithmetic expressions perform mathematical calculations.
+   - Relational expressions compare values and return boolean results.
+   - Logical expressions combine boolean values using logical operators.
+
+4. Functions:
+   - Functions encapsulate reusable blocks of code.
+   - Functions can have parameters that act as placeholders for values passed during function calls.
+   - Functions can return values using the `return` keyword.
+
+Please note that this is just a brief overview of the language's syntax and semantics.
 
 ## Contact Information
 
 - Name: Itzik Rahamim
 - Email: eizikr@icloud.com
 - LinkedIn: [itzik-rahamim-developer](https://www.linkedin.com/in/itzik-rahamim-developer/)
-
